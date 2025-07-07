@@ -1,143 +1,201 @@
-# Springboot - Twitter Backend API Simulation Challenge
-This challenge focuses on simulating a simplified Twitter API backend. Your goal is to implement a REST API that handles tweets and provides basic tweet management.
+# Twitter Backend API Simulation
 
-## 1. Introduction
-Your mission is to create a REST API that manages tweets. For this challenge, you can use any backend language or framework you prefer, but the core principles of a RESTful API should be followed. 
+Uma simulação simplificada de uma API backend do Twitter desenvolvida com Spring Boot.
 
-**OBS:** I (Gabriel) added a docker compose and docker file which allows you to run your Springboot application on a container with live reload. Just ensure that you added Springboot DevTools to your dependencies, otherwise, it won't work. Also, ensure that all the code is in the root of this repository, I'll leave a sample.
+## 📋 Descrição
 
-## 2. Challenge Definition
-In this challenge, you MUST create a REST API to simulate a Twitter-like service. Pay close attention to all the following instructions!
+Este projeto implementa uma API REST que gerencia tweets com funcionalidades básicas de criação, listagem e exclusão, seguindo os princípios RESTful.
 
-### 2.1. Technical Restrictions
-Your project:
+## 🚀 Como Executar
 
-- MUST store all data in memory. No databases (SQL, NoSQL, etc.) or caching systems (Redis, Memcached, etc.) are allowed.
+### Pré-requisitos
+- Java 17 ou superior
+- Maven 3.6 ou superior
 
-- MUST accept and respond only with JSON.
+### Executando a Aplicação
+```bash
+mvn spring-boot:run
+Executando os Testes
+mvn test
+Acessando a API
+A API estará disponível em: http://localhost:8080
 
-- SHOULD have a clear and organized project structure.
-
-- SHOULD include unit tests for your API logic, even if simplified.
-
-- MUST NOT explore file storage, user authentication, or authorization. All operations are assumed to be public or handled by a generic "system" user for the purpose of this challenge.
-
-## 2.2. API Endpoints
-The following endpoints must be present in your API, along with their expected functionality.
-
-### 2.2.1. Create a Tweet: POST /tweets
-This endpoint will receive new tweets. Each tweet consists of a content and an authorHandle (representing the Twitter handle of the "user" who posted it).
-
-**JSON**
-```
+📚 Endpoints da API
+1. Criar Tweet
+POST /tweets
+Body:
 {
-    "content": "This is my first tweet!",
-    "authorHandle": "@my_awesome_user"
+  "content": "This is my first tweet!",
+  "authorHandle": "@my_awesome_user"
 }
-```
-The fields in the JSON above mean the following:
+Responses:
+201 Created - Tweet criado com sucesso
+400 Bad Request - Requisição inválida
+422 Unprocessable Entity - Dados inválidos
+2. Listar Todos os Tweets
+GET /tweets
+Response: 200 OK com array de tweets ordenados por data (mais recente primeiro)
+3. Listar Tweets por Autor
+GET /tweets/{authorHandle}
+Exemplo: GET /tweets/@my_awesome_user
+Responses:
+200 OK - Lista de tweets do autor
+400 Bad Request - Handle inválido
+404 Not Found - Nenhum tweet encontrado
+4. Deletar Tweet
+DELETE /tweets/{id}
+Responses:
+204 No Content - Tweet deletado com sucesso
+404 Not Found - Tweet não encontrado
+🔧 Tecnologias Utilizadas
+Java 17
+Spring Boot 3.2.0
+Spring Web
+Spring Boot DevTools (para live reload)
+JUnit 5 (para testes)
+Mockito (para mocks nos testes)
+📝 Regras de Negócio
+Validações de Tweet:
+Conteúdo não pode estar vazio ou conter apenas espaços
+Conteúdo não pode exceder 280 caracteres
+AuthorHandle deve começar com @ e conter apenas caracteres alfanuméricos e underscore
+Armazenamento:
+Todos os dados são armazenados em memória (sem banco de dados)
+IDs únicos gerados automaticamente (UUID)
+Timestamps no formato ISO 8601
+🐳 Docker (Opcional)
+Se você tiver o Docker Compose configurado:
 
-- ```content```: Text content of the tweet. **REQUIRED**
+docker-compose up
+🧪 Estrutura de Testes
+O projeto inclui testes unitários para:
 
-- ```authorHandle```: Twitter handle of the author (e.g., @user). **REQUIRED**
+Serviços (TweetService)
+Controladores (TweetController)
+Validações e regras de negócio
+Tratamento de exceções
+📁 Estrutura do Projeto
+src/
+├── main/
+│   ├── java/com/practice/twitter/
+│   │   ├── controller/    # Controladores REST
+│   │   ├── dto/           # Data Transfer Objects
+│   │   ├── exception/     # Exceções customizadas
+│   │   ├── model/         # Modelos de dados
+│   │   ├── repository/    # Repositórios (armazenamento em memória)
+│   │   ├── service/       # Lógica de negócio
+│   │   └── TwitterApiApplication.java
+│   └── resources/
+│       └── application.properties
+└── test/
+  └── java/com/practice/twitter/
+      ├── controller/    # Testes dos controladores
+      └── service/       # Testes dos serviços
+📋 Exemplos de Uso
+Criar um tweet:
+curl -X POST http://localhost:8080/tweets \
+-H "Content-Type: application/json" \
+-d '{"content": "Hello World!", "authorHandle": "@testuser"}'
+Listar todos os tweets:
+curl http://localhost:8080/tweets
+Listar tweets de um autor:
+curl http://localhost:8080/tweets/@testuser
+Deletar um tweet:
+curl -X DELETE http://localhost:8080/tweets/{tweet-id}
+🤝 Contribuição
+Fork o projeto
+Crie uma branch para sua feature (git checkout -b feature/AmazingFeature)
+Commit suas mudanças (git commit -m 'Add some AmazingFeature')
+Push para a branch (git push origin feature/AmazingFeature)
+Abra um Pull Request
+📄 Licença
+Este projeto é apenas para fins educacionais e de demonstração.
 
 
-**The API will only accept tweets that:**
+Alternativamente, você também pode criar outros arquivos úteis:
 
-- Have both content and authorHandle filled.
+## `COMMANDS.md` (arquivo separado para comandos)
 
-- content MUST NOT be empty or just whitespace.
+```markdown
+# Comandos Úteis
 
-- content MUST NOT exceed 280 characters.
+## Desenvolvimento
 
-- ```authorHandle``` MUST start with @ and contain only alphanumeric characters and underscores (_) after the @. It also MUST NOT be empty after the @.
+### Executar a aplicação
+```bash
+mvn spring-boot:run
+Executar testes
+mvn test
+Executar apenas testes unitários
+mvn test -Dtest=*Test
+Compilar o projeto
+mvn compile
+Limpar e compilar
+mvn clean compile
+Gerar JAR
+mvn clean package
+Executar JAR gerado
+java -jar target/twitter-api-0.0.1-SNAPSHOT.jar
+Docker (se configurado)
+Subir aplicação com Docker
+docker-compose up
+Subir em background
+docker-compose up -d
+Parar containers
+docker-compose down
+URLs Importantes
+API Base URL: http://localhost:8080
+Health Check: http://localhost:8080/actuator/health (se configurado)
 
-### As a response, this endpoint is expected to respond with:
+## `.gitignore` (para não versionar arquivos desnecessários)
 
-```201 Created``` with the created tweet object, including a unique id and a timestamp.
-Example Response:
+```gitignore
+# Compiled class file
+*.class
 
-**JSON**
-```
-{
-    "id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-    "content": "This is my first tweet!",
-    "authorHandle": "@my_awesome_user",
-    "timestamp": "2025-06-08T18:37:30.000-03:00"
-}
-```
-(Note: The timestamp should be the time the tweet was received by the API, in ISO 8601 format.)
+# Log file
+*.log
 
-- ```422 Unprocessable Entity``` without any body. The tweet was not accepted for any reason (one or more of the acceptance criteria were not met - e.g., content too long, invalid handle).
+# BlueJ files
+*.ctxt
 
-- ```400 Bad Request``` without any body. The API did not understand the client's request (e.g., an invalid JSON structure, missing required fields entirely).
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
 
-### 2.2.2. Get Tweets from an Author: GET /tweets/{authorHandle}
-This endpoint should return a list of tweets by a specific author.
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
 
-**Example Request:** ```GET /tweets/@my_awesome_user```
+# virtual machine crash logs
+hs_err_pid*
 
-As a response, this endpoint is expected to respond with:
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
 
-```200 OK``` with a JSON array of tweet objects belonging to the specified ```authorHandle```. The tweets should be ordered from **most recent to oldest**.
-Example Response (if @my_awesome_user has posted two tweets):
+# IDE
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+.classpath
+.project
+.settings/
 
-JSON
-```
-[
-    {
-        "id": "f5e4d3c2-b1a0-9876-5432-10fedcba9876",
-        "content": "Another great day!",
-        "authorHandle": "@my_awesome_user",
-        "timestamp": "2025-06-08T18:40:00.000-03:00"
-    },
-    {
-        "id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-        "content": "This is my first tweet!",
-        "authorHandle": "@my_awesome_user",
-        "timestamp": "2025-06-08T18:37:30.000-03:00"
-    }
-]
-```
-
-```404 Not Found``` without any body. If no tweets are found for the given authorHandle.
-
-```400 Bad Request``` without any body. If the authorHandle in the path is not a valid format (e.g., doesn't start with @).
-
-### 2.2.3. Get All Tweets: GET /tweets
-This endpoint should return a list of all tweets in the system, ordered from most recent to oldest.
-
-As a response, this endpoint is expected to respond with:
-
-```200 OK``` with a JSON array of all tweet objects.
-Example Response (if there are two tweets in the system):
-
-JSON
-```
-[
-    {
-        "id": "f5e4d3c2-b1a0-9876-5432-10fedcba9876",
-        "content": "Another great day!",
-        "authorHandle": "@my_awesome_user",
-        "timestamp": "2025-06-08T18:40:00.000-03:00"
-    },
-    {
-        "id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-        "content": "This is my first tweet!",
-        "authorHandle": "@my_awesome_user",
-        "timestamp": "2025-06-08T18:37:30.000-03:00"
-    }
-]
-```
-An empty array [] should be returned if no tweets exist.
-
-### 2.2.4. Delete a Tweet: DELETE /tweets/{id}
-This endpoint deletes a tweet by its unique id.
-
-Example Request: ```DELETE /tweets/a1b2c3d4-e5f6-7890-1234-567890abcdef```
-
-As a response, this endpoint is expected to respond with:
-
-```204 No Content``` without any body. The tweet was successfully deleted.
-
-```404 Not Found``` without any body. If the tweet with the given id does not exist.
+# OS
+.DS_Store
+Thumbs.db
