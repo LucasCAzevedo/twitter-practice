@@ -12,6 +12,27 @@ Este projeto implementa uma API REST que gerencia tweets com funcionalidades bá
 - Java 17 ou superior
 - Maven 3.6 ou superior
 
+## 📊 Documentação e Diagramas
+
+### Use Cases
+Os casos de uso detalhados estão documentados em [`docs/use-cases/USE_CASES.md`](docs/use-cases/USE_CASES.md).
+
+### Diagramas UML
+- **Diagrama de Classes:** [`docs/diagrams/class-diagram.md`](docs/diagrams/class-diagram.md)
+- **Diagramas de Sequência:** [`docs/diagrams/sequence-diagrams.md`](docs/diagrams/sequence-diagrams.md)
+
+### Ferramentas para Visualizar Diagramas
+
+#### PlantUML
+Para gerar imagens dos diagramas PlantUML:
+```bash
+# Instalar PlantUML
+sudo apt-get install plantuml
+
+# Gerar diagramas
+cd docs/diagrams
+./generate-diagrams.sh
+
 ### Executando a Aplicação
 ```bash
 mvn spring-boot:run

@@ -1,0 +1,118 @@
+```plantuml
+@startuml TwitterAPI_ClassDiagram
+
+!theme plain
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+package "com.example.twitterapi" {
+ 
+ package "model" {
+     class Tweet {
+         - id: String
+         - content: String
+         - authorHandle: String
+         - timestamp: ZonedDateTime
+         --
+         + Tweet()
+         + Tweet(id: String, content: String, authorHandle: String, timestamp: ZonedDateTime)
+         + getId(): String
+         + setId(id: String): void
+         + getContent(): String
+         + setContent(content: String): void
+         + getAuthorHandle(): String
+         + setAuthorHandle(authorHandle: String): void
+         + getTimestamp(): ZonedDateTime
+         + setTimestamp(timestamp: ZonedDateTime): void
+     }
+ }
+ 
+ package "dto" {
+     class CreateTweetRequest {
+         - content: String
+         - authorHandle: String
+         --
+         + CreateTweetRequest()
+         + CreateTweetRequest(content: String, authorHandle: String)
+         + getContent(): String
+         + setContent(content: String): void
+         + getAuthorHandle(): String
+         + setAuthorHandle(authorHandle: String): void
+     }
+ }
+ 
+ package "controller" {
+     class TweetController <<@RestController>> {
+         - tweetService: TweetService
+         --
+         + createTweet(request: CreateTweetRequest): ResponseEntity<Tweet>
+         + getAllTweets(): ResponseEntity<List<Tweet>>
+         + getTweetsByAuthorHandle(authorHandle: String): ResponseEntity<List<Tweet>>
+         + deleteTweet(id: String): ResponseEntity<Void>
+     }
+ }
+ 
+ package "service" {
+     class TweetService <<@Service>> {
+         - {static} MAX_CONTENT_LENGTH: int = 280
+         - {static} AUTHOR_HANDLE_PATTERN: Pattern
+         - tweetRepository: TweetRepository
+         --
+         + createTweet(request: CreateTweetRequest): Tweet
+         + getAllTweets(): List<Tweet>
+         + getTweetsByAuthorHandle(authorHandle: String): List<Tweet>
+         + deleteTweet(id: String): void
+         - validateTweetRequest(request: CreateTweetRequest): void
+         - validateAuthorHandle(authorHandle: String): void
+     }
+ }
+ 
+ package "repository" {
+     class TweetRepository <<@Repository>> {
+         - tweets: Map<String, Tweet>
+         --
+         + save(tweet: Tweet): Tweet
+         + findById(id: String): Optional<Tweet>
+         + findAll(): List<Tweet>
+         + findByAuthorHandle(authorHandle: String): List<Tweet>
+         + deleteById(id: String): boolean
+         + existsByAuthorHandle(authorHandle: String): boolean
+     }
+ }
+ 
+ package "exception" {
+     abstract class RuntimeException
+     
+     class InvalidTweetException extends RuntimeException {
+         + InvalidTweetException(message: String)
+     }
+     
+     class TweetNotFoundException extends RuntimeException {
+         + TweetNotFoundException(message: String)
+     }
+     
+     class AuthorNotFoundException extends RuntimeException {
+         + AuthorNotFoundException(message: String)
+     }
+     
+     class InvalidAuthorHandleException extends RuntimeException {
+         + InvalidAuthorHandleException(message: String)
+     }
+ }
+}
+
+' Relacionamentos principais
+TweetController --> TweetService : uses
+TweetService --> TweetRepository : uses
+TweetService ..> Tweet : creates
+TweetController ..> CreateTweetRequest : receives
+TweetController ..> Tweet : returns
+TweetRepository o-- Tweet : stores
+
+' Relacionamentos de exceção
+TweetService ..> InvalidTweetException : throws
+TweetService ..> TweetNotFoundException : throws
+TweetService ..> AuthorNotFoundException : throws
+TweetService ..> InvalidAuthorHandleException : throws
+
+@enduml
