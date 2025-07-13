@@ -1,11 +1,11 @@
 package com.practice.twitter.service;
 
-import com.practice.twitter.dto.CreateTweetRequest;
+import com.practice.twitter.dto.CreateTweetRequestDTO;
 import com.practice.twitter.exception.InvalidTweetException;
 import com.practice.twitter.exception.TweetNotFoundException;
 import com.practice.twitter.exception.AuthorNotFoundException;
 import com.practice.twitter.exception.InvalidAuthorHandleException;
-import com.practice.twitter.model.Tweet;
+import com.practice.twitter.model.TweetModel;
 import com.practice.twitter.repository.TweetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,10 +31,10 @@ public class TweetService {
      * @param request dados para criação do tweet
      * @return tweet criado
      */
-    public Tweet createTweet(CreateTweetRequest request) {
+    public TweetModel createTweet(CreateTweetRequestDTO request) {
         validateTweetRequest(request);
 
-        Tweet tweet = new Tweet(
+        TweetModel tweet = new TweetModel(
                 UUID.randomUUID().toString(),
                 request.getContent(),
                 request.getAuthorHandle(),
@@ -47,7 +47,7 @@ public class TweetService {
      * Retorna todos os tweets cadastrados.
      * @return lista de tweets
      */
-    public List<Tweet> getAllTweets() {
+    public List<TweetModel> getAllTweets() {
         return tweetRepository.findAll();
     }
 
@@ -56,10 +56,10 @@ public class TweetService {
      * @param authorHandle identificador do autor
      * @return lista de tweets do autor
      */
-    public List<Tweet> getTweetsByAuthorHandle(String authorHandle) {
+    public List<TweetModel> getTweetsByAuthorHandle(String authorHandle) {
         validateAuthorHandle(authorHandle);
 
-        List<Tweet> tweets = tweetRepository.findByAuthorHandle(authorHandle);
+        List<TweetModel> tweets = tweetRepository.findByAuthorHandle(authorHandle);
         if (tweets.isEmpty()) {
             throw new AuthorNotFoundException("No tweets found for author: " + authorHandle);
         }
@@ -81,7 +81,7 @@ public class TweetService {
      * Valida os dados da requisição de criação de tweet.
      * @param request requisição de criação
      */
-    private void validateTweetRequest(CreateTweetRequest request) {
+    private void validateTweetRequest(CreateTweetRequestDTO request) {
         if (request.getContent() == null || request.getAuthorHandle() == null) {
             throw new InvalidTweetException("Content and authorHandle are required");
         }

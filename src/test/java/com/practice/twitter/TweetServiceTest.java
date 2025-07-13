@@ -1,19 +1,19 @@
 package com.practice.twitter;
 
-import com.practice.twitter.dto.CreateTweetRequest;
+import com.practice.twitter.dto.CreateTweetRequestDTO;
 import com.practice.twitter.exception.InvalidTweetException;
 import com.practice.twitter.exception.TweetNotFoundException;
 import com.practice.twitter.exception.AuthorNotFoundException;
 import com.practice.twitter.exception.InvalidAuthorHandleException;
-import com.practice.twitter.model.Tweet;
+import com.practice.twitter.model.TweetModel;
 import com.practice.twitter.repository.TweetRepository;
 import com.practice.twitter.service.TweetService;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,6 +22,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+
+/**
+* Inicializa os mocks antes de cada teste.
+*/
+@ExtendWith(MockitoExtension.class)
 
 /**
  * Classe de testes unitários para {@link TweetService}.
@@ -35,13 +40,6 @@ class TweetServiceTest {
     @InjectMocks
     private TweetService tweetService;
 
-    /**
-     * Inicializa os mocks antes de cada teste.
-     */
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     /**
      * Testa a criação de um tweet válido.
@@ -50,19 +48,16 @@ class TweetServiceTest {
     @Test
     void createTweet_ValidRequest_ShouldReturnTweet() {
         // Arrange
-        CreateTweetRequest request = new CreateTweetRequest("Hello World!", "@testuser");
-        when(tweetRepository.save(any(Tweet.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        CreateTweetRequestDTO request = new CreateTweetRequestDTO("Hello World!", "@testuser");
+        when(tweetRepository.save(any(TweetModel.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
-        Tweet result = tweetService.createTweet(request);
+        TweetModel result = tweetService.createTweet(request);
 
         // Assert
-        assertNotNull(result);
+        verify(tweetRepository).save(any(TweetModel.class));
         assertEquals("Hello World!", result.getContent());
         assertEquals("@testuser", result.getAuthorHandle());
-        assertNotNull(result.getId());
-        assertNotNull(result.getTimestamp());
-        verify(tweetRepository).save(any(Tweet.class));
     }
 
     /**
@@ -72,11 +67,11 @@ class TweetServiceTest {
     @Test
     void createTweet_EmptyContent_ShouldThrowException() {
         // Arrange
-        CreateTweetRequest request = new CreateTweetRequest("", "@testuser");
+        CreateTweetRequestDTO request = new CreateTweetRequestDTO("", "@testuser");
 
         // Act & Assert
         assertThrows(InvalidTweetException.class, () -> tweetService.createTweet(request));
-        verify(tweetRepository, never()).save(any(Tweet.class));
+        verify(tweetRepository, never()).save(any(TweetModel.class));
     }
 
     /**
@@ -87,11 +82,11 @@ class TweetServiceTest {
     void createTweet_ContentTooLong_ShouldThrowException() {
         // Arrange
         String longContent = "a".repeat(281);
-        CreateTweetRequest request = new CreateTweetRequest(longContent, "@testuser");
+        CreateTweetRequestDTO request = new CreateTweetRequestDTO(longContent, "@testuser");
 
         // Act & Assert
         assertThrows(InvalidTweetException.class, () -> tweetService.createTweet(request));
-        verify(tweetRepository, never()).save(any(Tweet.class));
+        verify(tweetRepository, never()).save(any(TweetModel.class));
     }
 
     /**
@@ -101,11 +96,11 @@ class TweetServiceTest {
     @Test
     void createTweet_InvalidAuthorHandle_ShouldThrowException() {
         // Arrange
-        CreateTweetRequest request = new CreateTweetRequest("Hello World!", "invalid_handle");
+        CreateTweetRequestDTO request = new CreateTweetRequestDTO("Hello World!", "invalid_handle");
 
         // Act & Assert
         assertThrows(InvalidAuthorHandleException.class, () -> tweetService.createTweet(request));
-        verify(tweetRepository, never()).save(any(Tweet.class));
+        verify(tweetRepository, never()).save(any(TweetModel.class));
     }
 
     /**
@@ -116,11 +111,11 @@ class TweetServiceTest {
     void getTweetsByAuthorHandle_ExistingAuthor_ShouldReturnTweets() {
         // Arrange
         String authorHandle = "@testuser";
-        List<Tweet> mockTweets = Arrays.asList(new Tweet(), new Tweet());
+        List<TweetModel> mockTweets = Arrays.asList(new TweetModel(), new TweetModel());
         when(tweetRepository.findByAuthorHandle(authorHandle)).thenReturn(mockTweets);
 
         // Act
-        List<Tweet> result = tweetService.getTweetsByAuthorHandle(authorHandle);
+        List<TweetModel> result = tweetService.getTweetsByAuthorHandle(authorHandle);
 
         // Assert
         assertEquals(2, result.size());

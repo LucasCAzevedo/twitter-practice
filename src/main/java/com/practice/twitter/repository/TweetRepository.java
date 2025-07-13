@@ -1,6 +1,6 @@
 package com.practice.twitter.repository;
 
-import com.practice.twitter.model.Tweet;
+import com.practice.twitter.model.TweetModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -12,14 +12,14 @@ import java.util.stream.Collectors;
  */
 @Repository
 public class TweetRepository {
-    private final Map<String, Tweet> tweets = new ConcurrentHashMap<String, Tweet>();
+    private final Map<String, TweetModel> tweets = new ConcurrentHashMap<String, TweetModel>();
 
     /**
      * Salva um tweet.
      * @param tweet tweet a ser salvo
      * @return tweet salvo
      */
-    public Tweet save(Tweet tweet) {
+    public TweetModel save(TweetModel tweet) {
         tweets.put(tweet.getId(), tweet);
         return tweet;
     }
@@ -29,7 +29,7 @@ public class TweetRepository {
      * @param id identificador do tweet
      * @return Optional com o tweet, se encontrado
      */
-    public Optional<Tweet> findById(String id) {
+    public Optional<TweetModel> findById(String id) {
         return Optional.ofNullable(tweets.get(id));
     }
 
@@ -37,7 +37,7 @@ public class TweetRepository {
      * Retorna todos os tweets ordenados por data de criação (mais recentes primeiro).
      * @return lista de tweets
      */
-    public List<Tweet> findAll() {
+    public List<TweetModel> findAll() {
         return tweets.values().stream()
                 .sorted((t1, t2) -> t2.getTimestamp().compareTo(t1.getTimestamp()))
                 .collect(Collectors.toList());
@@ -48,7 +48,7 @@ public class TweetRepository {
      * @param authorHandle identificador do autor
      * @return lista de tweets do autor
      */
-    public List<Tweet> findByAuthorHandle(String authorHandle) {
+    public List<TweetModel> findByAuthorHandle(String authorHandle) {
         return tweets.values().stream()
                 .filter(tweet -> tweet.getAuthorHandle().equals(authorHandle))
                 .sorted((t1, t2) -> t2.getTimestamp().compareTo(t1.getTimestamp()))

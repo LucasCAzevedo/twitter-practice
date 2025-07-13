@@ -1,11 +1,7 @@
 package com.practice.twitter.controller;
 
-import com.practice.twitter.dto.CreateTweetRequest;
-import com.practice.twitter.exception.InvalidTweetException;
-import com.practice.twitter.exception.TweetNotFoundException;
-import com.practice.twitter.exception.AuthorNotFoundException;
-import com.practice.twitter.exception.InvalidAuthorHandleException;
-import com.practice.twitter.model.Tweet;
+import com.practice.twitter.dto.CreateTweetRequestDTO;
+import com.practice.twitter.model.TweetModel;
 import com.practice.twitter.service.TweetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,18 +23,12 @@ public class TweetController {
     /**
      * Cria um novo tweet.
      * @param request dados para criação do tweet
-     * @return ResponseEntity com o tweet criado ou erro de validação
+     * @return ResponseEntity com o tweet criado
      */
     @PostMapping
-    public ResponseEntity<Tweet> createTweet(@RequestBody CreateTweetRequest request) {
-        try {
-            Tweet tweet = tweetService.createTweet(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(tweet);
-        } catch (InvalidTweetException | InvalidAuthorHandleException e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+    public ResponseEntity<TweetModel> createTweet(@RequestBody CreateTweetRequestDTO request) {
+        TweetModel tweet = tweetService.createTweet(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(tweet);
     }
 
     /**
@@ -46,8 +36,8 @@ public class TweetController {
      * @return lista de tweets
      */
     @GetMapping
-    public ResponseEntity<List<Tweet>> getAllTweets() {
-        List<Tweet> tweets = tweetService.getAllTweets();
+    public ResponseEntity<List<TweetModel>> getAllTweets() {
+        List<TweetModel> tweets = tweetService.getAllTweets();
         return ResponseEntity.ok(tweets);
     }
 
@@ -57,29 +47,19 @@ public class TweetController {
      * @return lista de tweets do autor
      */
     @GetMapping("/{authorHandle}")
-    public ResponseEntity<List<Tweet>> getTweetsByAuthorHandle(@PathVariable String authorHandle) {
-        try {
-            List<Tweet> tweets = tweetService.getTweetsByAuthorHandle(authorHandle);
-            return ResponseEntity.ok(tweets);
-        } catch (InvalidAuthorHandleException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        } catch (AuthorNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+    public ResponseEntity<List<TweetModel>> getTweetsByAuthorHandle(@PathVariable String authorHandle) {
+        List<TweetModel> tweets = tweetService.getTweetsByAuthorHandle(authorHandle);
+        return ResponseEntity.ok(tweets);
     }
 
     /**
      * Remove um tweet pelo seu ID.
      * @param id identificador do tweet
-     * @return resposta sem conteúdo ou erro caso não encontrado
+     * @return resposta sem conteúdo
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTweet(@PathVariable String id) {
-        try {
-            tweetService.deleteTweet(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } catch (TweetNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        tweetService.deleteTweet(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

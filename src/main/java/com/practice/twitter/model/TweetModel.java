@@ -6,7 +6,7 @@ import java.time.ZonedDateTime;
 /**
  * Entidade que representa um tweet.
  */
-public class Tweet {
+public class TweetModel {
     private String id;
     private String content;
     private String authorHandle;
@@ -17,7 +17,7 @@ public class Tweet {
     /**
      * Construtor padrão.
      */
-    public Tweet() {
+    public TweetModel() {
     }
 
     /**
@@ -27,7 +27,7 @@ public class Tweet {
      * @param authorHandle identificador do autor
      * @param timestamp data e hora de criação
      */
-    public Tweet(String id, String content, String authorHandle, ZonedDateTime timestamp) {
+    public TweetModel(String id, String content, String authorHandle, ZonedDateTime timestamp) {
         this.id = id;
         this.content = content;
         this.authorHandle = authorHandle;

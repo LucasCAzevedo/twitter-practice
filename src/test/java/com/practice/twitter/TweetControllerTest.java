@@ -1,8 +1,8 @@
 package com.practice.twitter;
 
 import com.practice.twitter.controller.TweetController;
-import com.practice.twitter.dto.CreateTweetRequest;
-import com.practice.twitter.model.Tweet;
+import com.practice.twitter.dto.CreateTweetRequestDTO;
+import com.practice.twitter.model.TweetModel;
 import com.practice.twitter.service.TweetService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -45,9 +45,9 @@ class TweetControllerTest {
     @Test
     void createTweet_ValidRequest_ShouldReturn201() throws Exception {
         // Arrange
-        CreateTweetRequest request = new CreateTweetRequest("Hello World!", "@testuser");
-        Tweet mockTweet = new Tweet("test-id", "Hello World!", "@testuser", ZonedDateTime.now());
-        when(tweetService.createTweet(any(CreateTweetRequest.class))).thenReturn(mockTweet);
+        CreateTweetRequestDTO request = new CreateTweetRequestDTO("Hello World!", "@testuser");
+        TweetModel mockTweet = new TweetModel("test-id", "Hello World!", "@testuser", ZonedDateTime.now());
+        when(tweetService.createTweet(any(CreateTweetRequestDTO.class))).thenReturn(mockTweet);
 
         // Act & Assert
         mockMvc.perform(post("/tweets")
@@ -67,8 +67,8 @@ class TweetControllerTest {
     @Test
     void getAllTweets_ShouldReturn200() throws Exception {
         // Arrange
-        Tweet tweet1 = new Tweet("id1", "Content 1", "@user1", ZonedDateTime.now());
-        Tweet tweet2 = new Tweet("id2", "Content 2", "@user2", ZonedDateTime.now());
+        TweetModel tweet1 = new TweetModel("id1", "Content 1", "@user1", ZonedDateTime.now());
+        TweetModel tweet2 = new TweetModel("id2", "Content 2", "@user2", ZonedDateTime.now());
         when(tweetService.getAllTweets()).thenReturn(Arrays.asList(tweet1, tweet2));
 
         // Act & Assert
@@ -87,7 +87,7 @@ class TweetControllerTest {
     @Test
     void getTweetsByAuthorHandle_ExistingAuthor_ShouldReturn200() throws Exception {
         // Arrange
-        Tweet mockTweet = new Tweet("test-id", "Hello World!", "@testuser", ZonedDateTime.now());
+        TweetModel mockTweet = new TweetModel("test-id", "Hello World!", "@testuser", ZonedDateTime.now());
         when(tweetService.getTweetsByAuthorHandle("@testuser")).thenReturn(Collections.singletonList(mockTweet));
 
         // Act & Assert

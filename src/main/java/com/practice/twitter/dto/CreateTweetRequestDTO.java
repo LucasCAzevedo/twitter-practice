@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * DTO para requisições de criação de tweet.
  */
-public class CreateTweetRequest {
+public class CreateTweetRequestDTO {
     @JsonProperty("content")
     private String content;
 
@@ -15,7 +15,7 @@ public class CreateTweetRequest {
     /**
      * Construtor padrão.
      */
-    public CreateTweetRequest() {
+    public CreateTweetRequestDTO() {
     }
 
     /**
@@ -23,7 +23,7 @@ public class CreateTweetRequest {
      * @param content conteúdo do tweet
      * @param authorHandle identificador do autor
      */
-    public CreateTweetRequest(String content, String authorHandle) {
+    public CreateTweetRequestDTO(String content, String authorHandle) {
         this.content = content;
         this.authorHandle = authorHandle;
     }
